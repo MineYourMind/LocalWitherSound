@@ -49,7 +49,7 @@ public class Wither extends JavaPlugin implements Listener {
                 @Override
                 public void run() {
                     w.spawnEntity(l, EntityType.WITHER);
-                    w.playSound(l, Sound.WITHER_SPAWN, 100, 20);
+                    w.playSound(l, Sound.WITHER_SPAWN, 1, 1);
                 }
             }, 218L);
             getServer().getScheduler().runTaskLater(this, new Runnable() {
@@ -58,7 +58,6 @@ public class Wither extends JavaPlugin implements Listener {
                     e.getEntity().remove();
                 }
             }, 220L);
-            e.setCancelled(true);
         }
     }
 
