@@ -1,0 +1,4 @@
+name: ${project.artifactId}
+main: net.mineyourmind.wither.Wither
+author: Slind14
+version: ${project.version}
