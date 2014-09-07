@@ -1,6 +1,7 @@
 package net.mineyourmind.wither;
 
 import org.bukkit.*;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,9 +14,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Wither extends JavaPlugin implements Listener {
 
+    private Boolean restrictWitherToNether;
+
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents( this, this );
+        loadConfig();
         getLogger().info("Enabled.");
     }
 
@@ -24,12 +28,19 @@ public class Wither extends JavaPlugin implements Listener {
         getLogger().info("Disabled.");
     }
 
+    public void loadConfig() {
+        saveDefaultConfig();
+        reloadConfig();
+        FileConfiguration config = getConfig();
+        restrictWitherToNether = config.getBoolean("restrictWitherToNether");
+    }
+
     @EventHandler
     public void onCreatureSpawnEvent(final CreatureSpawnEvent e) {
         if (e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) {
             final Location l = e.getLocation();
             final World w = l.getWorld();
-            if (!w.getEnvironment().equals(World.Environment.NETHER)) {
+            if (!w.getEnvironment().equals(World.Environment.NETHER) && restrictWitherToNether ) {
                 for (Player p : w.getPlayers()) {
                     if (l.distance(p.getLocation()) < 20 ) {
                         p.sendMessage(ChatColor.GOLD + "[MyM-Wither] " + ChatColor.RED + "Withers can only be spawned in the Nether!");
