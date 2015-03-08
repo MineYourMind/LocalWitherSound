@@ -1,7 +1,7 @@
 version: 1
 
 allowedWorlds:
- - DIM-1
- - Nether
+- 'DIM-1'
+- Nether
 
- restrictionMessage: 'Withers can only be spawned in the Nether!'
+restrictionMessage: 'Withers can only be spawned in the Nether!'
