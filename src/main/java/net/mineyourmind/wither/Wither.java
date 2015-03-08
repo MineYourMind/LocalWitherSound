@@ -1,20 +1,27 @@
 package net.mineyourmind.wither;
 
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Slind on 06.08.2014.
  */
 public class Wither extends JavaPlugin implements Listener {
 
-    private Boolean restrictWitherToNether;
+    private Set<String> allowedWorlds;
+    private String restrictionMessage;
 
     @Override
     public void onEnable() {
@@ -32,7 +39,19 @@ public class Wither extends JavaPlugin implements Listener {
         saveDefaultConfig();
         reloadConfig();
         FileConfiguration config = getConfig();
-        restrictWitherToNether = config.getBoolean("restrictWitherToNether");
+        allowedWorlds = new HashSet<String>(config.getStringList("allowedWorlds"));
+        restrictionMessage = config.getString("restrictionMessage");
+    }
+
+    @EventHandler
+    public void onBlockPlace(final BlockPlaceEvent e) {
+        Block placedBlock = e.getBlockPlaced();
+        if (placedBlock.getType().equals(Material.SKULL) && placedBlock.getRelative(BlockFace.DOWN).getType().equals(Material.SOUL_SAND)) {
+            if (!allowedWorlds.contains(placedBlock.getWorld().getName())) {
+                e.getPlayer().sendMessage(ChatColor.GOLD + "[MyM-Wither] " + ChatColor.RED + restrictionMessage);
+                e.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler
@@ -40,10 +59,10 @@ public class Wither extends JavaPlugin implements Listener {
         if (e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) {
             final Location l = e.getLocation();
             final World w = l.getWorld();
-            if (!w.getEnvironment().equals(World.Environment.NETHER) && restrictWitherToNether ) {
+            if (!allowedWorlds.contains(w.getName())) {
                 for (Player p : w.getPlayers()) {
                     if (l.distance(p.getLocation()) < 20 ) {
-                        p.sendMessage(ChatColor.GOLD + "[MyM-Wither] " + ChatColor.RED + "Withers can only be spawned in the Nether!");
+                        p.sendMessage(ChatColor.GOLD + "[MyM-Wither] " + ChatColor.RED + restrictionMessage);
                     }
                 }
                 e.setCancelled(true);
