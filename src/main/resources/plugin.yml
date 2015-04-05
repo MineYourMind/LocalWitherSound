@@ -1,4 +1,4 @@
 name: ${project.artifactId}
 main: net.mineyourmind.wither.Wither
 author: Slind14
-version: 1.1
+version: 1.2
