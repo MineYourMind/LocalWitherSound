@@ -71,23 +71,22 @@ public class Wither extends JavaPlugin implements Listener {
             getServer().getScheduler().runTaskLater(this, new Runnable() {
                 @Override
                 public void run() {
-                    w.playEffect(l, Effect.SMOKE, 8);
-                    w.createExplosion(l, 5);
+                    if (e.getLocation() != null) {
+                        w.playEffect(e.getLocation(), Effect.SMOKE, 8);
+                        w.createExplosion(e.getLocation(), 5);
+                    }
                 }
             }, 216L);
             getServer().getScheduler().runTaskLater(this, new Runnable() {
                 @Override
                 public void run() {
-                    w.spawnEntity(l, EntityType.WITHER);
-                    w.playSound(l, Sound.WITHER_SPAWN, 1, 1);
+                    if (e.getLocation() != null) {
+                        w.spawnEntity(e.getLocation(), EntityType.WITHER);
+                        w.playSound(e.getLocation(), Sound.WITHER_SPAWN, 1, 1);
+                        e.getEntity().remove();
+                    }
                 }
             }, 218L);
-            getServer().getScheduler().runTaskLater(this, new Runnable() {
-                @Override
-                public void run() {
-                    e.getEntity().remove();
-                }
-            }, 220L);
         }
     }
 
